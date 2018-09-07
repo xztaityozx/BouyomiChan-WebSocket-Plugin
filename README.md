@@ -16,20 +16,22 @@
 
 
 JavaScriptからプラグインへ喋らせる方法。
----------------------------------------
-    // 区切りは<bouyomi>になります。
-    var delim = "<bouyomi>";
-    var speed = 100; // 速度50-200。-1を指定すると本体設定
-    var pitch = 100; // ピッチ50-200。-1を指定すると本体設定
-    var volume = 100; // ボリューム0-100。-1を指定すると本体設定
-    var type = 0; // 声質(0.本体設定/1.女性1/2.女性2/3.男性1/4.男性2/5.中性/6.ロボット/7.機械1/8.機械2)
-    var text = "喋らせる内容のテキスト";
+```js
+// 区切りは<bouyomi>になります。
+var delim = "<bouyomi>";
+var command = 0x0001; // コマンドです。0x0001.読み上げ/0x0010.ポーズ/0x0020.再開/0x0030.スキップ
+var speed = 100; // 速度50-200。-1を指定すると本体設定
+var pitch = 100; // ピッチ50-200。-1を指定すると本体設定
+var volume = 100; // ボリューム0-100。-1を指定すると本体設定
+var type = 0; // 声質(0.本体設定/1.女性1/2.女性2/3.男性1/4.男性2/5.中性/6.ロボット/7.機械1/8.機械2)
+var text = "喋らせる内容のテキスト";
     
-    // 設定を区切りでつないで送信文字列を作る。
-    var sends = "" + speed + delim + pitch + delim + volume + delim + type + delim + text;
+// 設定を区切りでつないで送信文字列を作る。
+const sends = "" command + delim + speed + delim + pitch + delim + volume + delim + type + delim + text;
     
-    // 棒読みちゃんに送信　ポートは50002です。
-    var socket = new WebSocket('ws://localhost:50002/');
-    socket.onopen = function() {
-    	socket.send(sends);
-    }
+// 棒読みちゃんに送信　ポートは50002です。
+var socket = new WebSocket('ws://localhost:50002/');
+socket.onopen = function() {
+    socket.send(sends);
+}
+```
