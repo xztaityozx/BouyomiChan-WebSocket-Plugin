@@ -17,7 +17,7 @@ namespace Plugin_WebSocket {
 
 
         public string Name => "WebSocketサーバー";
-        public string Version => "2018/09/07版";
+        public string Version => "2018/09/08版";
         public string Caption => "WebSocketからの読み上げリクエストを受け付けます。chocoa/BouyomiChan-WebSocket-PluginのForkです";
 
         public ISettingFormData SettingFormData //プラグインの設定画面情報（設定画面が必要なければnullを返してください）
@@ -181,16 +181,29 @@ namespace Plugin_WebSocket {
                 Debug.WriteLine(fromClient);
 
                 string[] delim = {"<bouyomi>"};
-                var param = fromClient.Split(delim, 6, StringSplitOptions.None);
-                var vt = (VoiceType) int.Parse(param[4]);
-                var text = param[5];
-                var values = param.Take(5).Select(int.Parse).ToArray();
+                var param = fromClient.Split(delim, 6, StringSplitOptions.RemoveEmptyEntries);
+                try {
+                    var vt = (VoiceType) int.Parse(param[4]);
+                    var text = param[5];
+                    var values = param.Take(5).Select(int.Parse).ToArray();
 
-                switch (values[0]) {
-                    case 0x0001: Pub.AddTalkTask(text, values[1], values[2], values[3], vt);break;
-                    case 0x0010: Pub.Pause = true;break;
-                    case 0x0020: Pub.Pause = false;break;
-                    case 0x0030: Pub.SkipTalkTask();break;
+                    switch (values[0]) {
+                        case 0x0001:
+                            Pub.AddTalkTask(text, values[1], values[2], values[3], vt);
+                            break;
+                        case 0x0010:
+                            Pub.Pause = true;
+                            break;
+                        case 0x0020:
+                            Pub.Pause = false;
+                            break;
+                        case 0x0030:
+                            Pub.SkipTalkTask();
+                            break;
+                    }
+                }
+                catch (Exception e) {
+                    Pub.AddTalkTask("WebSocketサーバー内でエラーが起きました・・・");
                 }
             }
 
